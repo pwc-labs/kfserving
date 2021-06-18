@@ -3,11 +3,14 @@ kind: Trigger
 metadata:
   name: kfserving-trigger
 spec:
+  delivery:
+    backoffDelay: PT3S
+    backoffPolicy: exponential
+    retry: 1
   broker: default
   filter:
     attributes:
-      type: dev.knative.samples.helloworld
-      source: dev.knative.samples/helloworldsource
+      source: sendme
   subscriber:
     ref:
      apiVersion: serving.kubeflow.org/v1alpha2
