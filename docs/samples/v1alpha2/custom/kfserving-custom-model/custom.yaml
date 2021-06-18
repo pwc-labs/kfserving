@@ -10,4 +10,4 @@ spec:
       custom:
         container:
           name: custom
-          image: lmagana92/kfserving-custom-model:v2
+          image: lmagana92/kfserving-custom-model:v3

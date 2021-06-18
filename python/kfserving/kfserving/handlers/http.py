@@ -15,6 +15,7 @@
 import tornado.web
 import json
 import pytz
+import uuid
 import cloudevents.exceptions as ce
 from cloudevents.http import CloudEvent, from_http, is_binary, is_structured, to_binary, to_structured
 from cloudevents.sdk.converters.util import has_binary_headers
@@ -85,6 +86,7 @@ class PredictHandler(HTTPHandler):
                 else:  # utc now() timestamp
                     self.set_header('ce-time', datetime.utcnow().replace(tzinfo=pytz.utc).
                                     strftime('%Y-%m-%dT%H:%M:%SZ'))
+            self.set_header('ce-id', str(uuid.uuid4()))
             response = eventbody
 
         self.write(response)

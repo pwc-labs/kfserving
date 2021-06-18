@@ -1,8 +1,8 @@
 curl -v "http://broker-ingress.knative-eventing.svc.cluster.local/default/default" \
   -X POST \
-  -H "Ce-Id: say-hello" \
+  -H "Ce-Id: 536808d3-88be-4077-9d7a-a3f162705f79" \
   -H "Ce-Specversion: 1.0" \
-  -H "Ce-Type: sample" \
-  -H "Ce-Source: not-sendoff" \
+  -H "Ce-Type: dev.knative.samples.helloworld" \
+  -H "Ce-Source: dev.knative.samples/helloworldsource" \
   -H "Content-Type: application/json" \
   -d $INPUT_PATH
