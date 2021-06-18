@@ -1,0 +1,18 @@
+apiVersion: eventing.knative.dev/v1
+kind: Trigger
+metadata:
+  name: kfserving-trigger
+spec:
+  delivery:
+    backoffDelay: PT1S
+    backoffPolicy: exponential
+    retry: 1
+  broker: default
+  filter:
+    attributes:
+      type: sample
+  subscriber:
+    ref:
+     apiVersion: serving.kubeflow.org/v1alpha2
+     kind: InferenceService
+     name: kfserving-custom-model
