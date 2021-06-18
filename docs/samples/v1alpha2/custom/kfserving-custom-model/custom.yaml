@@ -8,6 +8,6 @@ spec:
   default:
     predictor:
       custom:
-        name: custom
         container:
-          image: {username}/kfserving-custom-model
+          name: custom
+          image: lmagana92/kfserving-custom-model:v2

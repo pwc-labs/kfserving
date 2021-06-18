@@ -92,7 +92,7 @@ class PredictHandler(HTTPHandler):
                     self.set_header(k, v)
                 else:  # utc now() timestamp
                     self.set_header('ce-time', datetime.utcnow().replace(tzinfo=pytz.utc).
-                                    strftime('%Y-%m-%dT%H:%M:%S.%f%z'))
+                                    strftime('%Y-%m-%dT%H:%M:%SZ'))
             response = eventbody
 
         self.write(response)
