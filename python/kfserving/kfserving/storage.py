@@ -168,16 +168,13 @@ The path or model %s does not exist." % uri)
                      account_name,
                      container_name,
                      prefix)
-        try:
-            connect_str = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
-            blob_service_client = BlobServiceClient.from_connection_string(connect_str)
-        except Exception: # pylint: disable=broad-except
-            token = Storage._get_azure_storage_token()
-            if token is None:
-                logging.warning("Azure credentials not found, retrying anonymous access")
-            blob_service_client = BlobServiceClient(uri, credentials=token)
+        token = Storage._get_azure_storage_token()
+        if token is None:
+            logging.warning("Azure credentials not found, retrying anonymous access")
+        blob_service_client = BlobServiceClient(uri, credentials=token)
+        container_client = blob_service_client.get_container_client(container_name)
         count = 0
-        blobs = blob_service_client.get_container_client(container_name).list_blobs(prefix=prefix)
+        blobs = container_client.list_blobs(prefix=prefix)
         for blob in blobs:
             dest_path = os.path.join(out_dir, blob.name)
             if "/" in blob.name:
@@ -192,7 +189,7 @@ The path or model %s does not exist." % uri)
                     os.makedirs(dir_path)
 
             logging.info("Downloading: %s to %s", blob.name, dest_path)
-            downloader = blob_service_client.get_container_client(container_name).download_blob(blob.name)
+            downloader = container_client.download_blob(blob.name)
             with open(dest_path, "wb+") as f:
                 f.write(downloader.readall())
             count = count + 1
