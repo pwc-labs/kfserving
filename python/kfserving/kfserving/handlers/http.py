@@ -23,6 +23,7 @@ from http import HTTPStatus
 from kfserving.kfmodel_repository import KFModelRepository
 from datetime import datetime
 
+uniqueCEKeys = set(["ce-time", "ce-type", "ce-source"])
 
 class HTTPHandler(tornado.web.RequestHandler):
     def initialize(self, models: KFModelRepository):
@@ -81,18 +82,21 @@ class PredictHandler(HTTPHandler):
             else model.predict(request)
         response = model.postprocess(response)
 
-        if has_binary_headers(self.request.headers) and False:
+        if has_binary_headers(self.request.headers):
             event = CloudEvent(body._attributes, response)
             if is_binary(self.request.headers):
                 eventheader, eventbody = to_binary(event)
             elif is_structured(self.request.headers):
                 eventheader, eventbody = to_structured(event)
             for k, v in eventheader.items():
-                if k != "ce-time":
+                if k not in uniqueCEKeys:
                     self.set_header(k, v)
-                else:  # utc now() timestamp
-                    self.set_header('ce-time', datetime.utcnow().replace(tzinfo=pytz.utc).
-                                    strftime('%Y-%m-%dT%H:%M:%SZ'))
+            # utc now() timestamp
+            self.set_header('ce-time', datetime.utcnow().replace(tzinfo=pytz.utc).
+                            strftime('%Y-%m-%dT%H:%M:%SZ'))
+            # this okay but should be configurable somehow
+            self.set_header('ce-type', f"{name}-kfserving-type")
+            self.set_header('ce-source', f"{name}-kfserving-source")
             response = eventbody
 
         self.write(response)
