@@ -2,7 +2,7 @@ curl -v "http://broker-ingress.knative-eventing.svc.cluster.local/default/defaul
   -X POST \
   -H "Ce-Id: 536808d3-88be-4077-9d7a-a3f162705f79" \
   -H "Ce-Specversion: 1.0" \
-  -H "Ce-Type: dev.knative.samples.helloworld" \
-  -H "Ce-Source: dev.knative.samples/helloworldsource" \
+  -H "Ce-Type: no-reply" \
+  -H "Ce-Source: do-sendme" \
   -H "Content-Type: application/json" \
-  -d $INPUT_PATH
+  -d '{"instances": [{"image": {"b64": "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg=="}}]}'
