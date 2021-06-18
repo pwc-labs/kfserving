@@ -10,7 +10,8 @@ spec:
   broker: default
   filter:
     attributes:
-      source: sendme
+      type: dev.knative.samples.helloworld
+      source: dev.knative.samples/helloworldsource
   subscriber:
     ref:
      apiVersion: serving.kubeflow.org/v1alpha2

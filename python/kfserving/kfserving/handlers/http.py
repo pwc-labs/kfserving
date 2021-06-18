@@ -24,6 +24,7 @@ from kfserving.kfmodel import ModelType
 from datetime import datetime
 
 from ray.serve.api import RayServeHandle
+uniqueCEKeys = set(["ce-time", "ce-type", "ce-source"])
 
 
 class HTTPHandler(tornado.web.RequestHandler):
@@ -80,11 +81,14 @@ class PredictHandler(HTTPHandler):
             elif is_structured(self.request.headers):
                 eventheader, eventbody = to_structured(event)
             for k, v in eventheader.items():
-                if k != "ce-time":
+                if k not in uniqueCEKeys:
                     self.set_header(k, v)
-                else:  # utc now() timestamp
-                    self.set_header('ce-time', datetime.utcnow().replace(tzinfo=pytz.utc).
-                                    strftime('%Y-%m-%dT%H:%M:%SZ'))
+            # utc now() timestamp
+            self.set_header('ce-time', datetime.utcnow().replace(tzinfo=pytz.utc).
+                            strftime('%Y-%m-%dT%H:%M:%SZ'))
+            # this okay but should be configurable somehow
+            self.set_header('ce-type', f"{name}-kfserving-type")
+            self.set_header('ce-source', f"{name}-kfserving-source")
             response = eventbody
 
         self.write(response)
